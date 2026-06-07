@@ -1,0 +1,92 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - app-network
+
+  backend:
+    image: ghcr.io/fatenke/notes-backend:latest
+    container_name: backend
+    restart: always
+
+    depends_on:
+      - mysql
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - app-network
+
+  frontend:
+    image: ghcr.io/fatenke/notes-frontend:latest
+    container_name: frontend
+    restart: always
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"
+
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+
+    volumes:
+      - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    ports:
+      - "9090:9090"
+
+    depends_on:
+      - backend
+
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+
+    ports:
+      - "3001:3000"
+
+    depends_on:
+      - prometheus
+
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
