@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_URL = "/api/notes";
+const API_URL = import.meta.env.DEV
+  ? "http://localhost:8080/api/notes"
+  : "/api/notes"; 
 
 export const getNotes = async () => {
   try {
