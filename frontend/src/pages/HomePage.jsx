@@ -13,7 +13,7 @@ export default function HomePage() {
 
     try {
       const res = await getNotes();
-      setNotes(res);
+      setNotes(Array.isArray(res) ? res : []);
     } catch (err) {
       setError(err.message);
       setNotes([]);

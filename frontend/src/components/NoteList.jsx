@@ -9,14 +9,14 @@ export default function NoteList({ notes, loading, error, onDelete }) {
     return <p className="status-message status-error">{error}</p>;
   }
 
-  if (notes.length === 0) {
+  if (!Array.isArray(notes) || notes.length === 0) {
     return <p className="status-message">No notes found</p>;
   }
 
   return (
     <div className="note-list">
       {notes.map((note) => (
-        <NoteCard key={note.id} note={note} onDelete={onDelete} />
+        <NoteCard key={note.idNote} note={note} onDelete={onDelete} />
       ))}
     </div>
   );

@@ -27,7 +27,7 @@ services:
       - mysql
 
     environment:
-      DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
 
